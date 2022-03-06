@@ -1,0 +1,4 @@
+colorama==0.4.4
+ffmpy==0.3.0
+ffprobe-python==1.0.3
+future==0.18.2
