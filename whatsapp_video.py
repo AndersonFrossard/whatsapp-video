@@ -92,8 +92,11 @@ def get_yellow_color():
 def get_default_color():
 	return '\033[39m'
 
+#TODO user defined max size
+#TODO non verbose while resizing
 def get_max_filesize():
-	return 63000000
+	#return 63000000
+	return 15000000
 
 def get_filesize(filename):
 	return os.path.getsize(filename)

@@ -17,11 +17,12 @@ Table of contents
 - [Instalation and how to use](#instalation-and-how-to-use)
 	- [Requirements](#requirements)
 	
-	- [GUI - Graphical User Interface](#gui)
-	
 	- [Command-line interface](#cli)
 	
 	- [Windows Standalone](#standalone)
+	
+		- [Checking integrity of zipfile](#integrity)
+		
 -	[Public key](#public-key)
 -	[Tecnologies](#tecnologies)
 - [Autor](#autor)
@@ -52,9 +53,14 @@ My software is straight to the point:</p>
 
 ### Requirements
 
+>FFMPEG
+>
 >colorama
+>
 >ffmpy
+>
 >ffprobe
+>
 >future
 
 You can install it by running this command:
@@ -64,7 +70,8 @@ You can install it by running this command:
 	pip install ffmpy
 	pip install ffprobe-python
 
-
+You can obtain FFMPEG here:<br>
+<a href="https://ffmpeg.org">https://ffmpeg.org</a>
 
 ## CLI - Command Line Interface
 
@@ -86,52 +93,37 @@ Perhaps you just want a fast way to get things running. The standalone executabl
 </ul>
 
 
-### How to check whether the zipfile has not been tampered with:
+### Integrity
 
-First, you need to download my pgp public key and check if my public key has not been hacked or tampered with. In order to do that, you should download my public pgp key from two different sources.
-They must have the same fingerprint and must not have been revoked.
+#### How to check if downloaded file is correct and valid:
 
-[Check my Fingerprint here](#fingerprint)
-
-### How to obtain my Public keys
-
-[Public key](#public-key)
-
-
-### How to check if the keys are correct and valid:
-
- Run this command to check fingerprint from diferent files:
-
-	gpg --show-keys filename1.asc
-
- ![Checking fingerprints](./img/image04.png)
-
- If they both have my [fingerprint](#fingerprint) and have not been revoked, good, the key is valid and secure for use. 
-
-Import my pgp public signature key:
-
+ Get my public key <a href="https://github.com/AndersonFrossard/tutorialGnuPG/blob/main/frossard.public.key.asc">HERE</a> or <a href="https://keyserver2.pgp.com/vkd/DownloadKey.event?keyid=0xB79AAE8846C18DF7">HERE</a>
+ 
+ Import my public key:
+ 
 	gpg --import frossard.public.key.asc
+ 
+ Verify the file:
+ 
+	gpg --verify whatsapp_video.zip.asc
 
-Check wether youtube_download.zip has been signed by myself:
 
-	gpg --verify youtube_download.sig
-
-To pass verification you should see a message saying
+If sucessfull, you should see a message saying
 >Good signature from Anderson Frossard. (Das ist meine key. Wir ziehen voran!)
 
 gpg will probably also say this signature is not certified. That´s because you have just downloaded it and have not applied command *trust* to it.
 
 Once the gpg has verified the  file has been signed by myself, you are safe to unzip it and run its executable. 
 
-Optionally, for aditional security you can hash your youtube_download.exe file and compare with my hash:
+Optionally, for aditional security you can hash your whatsapp_video.zip file and compare with my hash:
 
 <table>
 	<tr>
 		<td>SHA-256</td>
 		<td>File</td>
 	<tr>
-		<td>Yet do be hashed</td>
-		<td>whatsapp_video.exe</td>
+		<td>335D2644CC798F29904B08934FE7512B4428AE10D101C29B1B5193ED538ED615</td>
+		<td>whatsapp_video.zip</td>
 	</tr>
 </table>
 
@@ -148,14 +140,15 @@ My PGP public key is avaiable at:
 
 [![PGP 0x46C18DF7](https://peegeepee.com/badge/orange/46C18DF7.svg)](https://d.peegeepee.com/921D2E998D1E3213DFCF74F7B79AAE8846C18DF7.asc)
 
-### Fingerprint
-My PGP public key full fingerprint is:
+### GPG and Encryption
 
-	921D 2E99 8D1E 3213 DFCF 74F7 B79A AE88 46C1 8DF7
+There are many tutorials and books on the internet about this subject. I am writing a little tutorial focusing on practical command line interface commands and basic concepts.
 
-My PGP public key fingerprint key ID is:
+You can learn basic comands on my github page here:
 
-	46C1 8DF7
+<a href="https://github.com/AndersonFrossard/tutorialGnuPG">https://github.com/AndersonFrossard/tutorialGnuPG</a>
+
+<i>Nothing is faster than command line interface</i>
 
 Enjoy!
 
