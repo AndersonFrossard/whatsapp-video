@@ -62,6 +62,12 @@ ffmpeg -i input.mp4 -vf "subtitles=subtitle.srt" output.mp4
 
 # o programa tem que ter opcao de cortar o video em N partes para 
 # enviar em varias partes
+
+Sugestoes para o arquivo de configuracao:
+* https://pypi.org/project/python-dotenv/
+
+* olhar a lib cnofig parser (yaml)
+* https://towardsdatascience.com/from-novice-to-expert-how-to-write-a-configuration-file-in-python-273e171a8eb3
 """
 
 import ffmpy
@@ -72,11 +78,15 @@ from colorama import Fore, Back, Style
 import os
 import re
 
+import config
+
 init()
 
 def is_whatsapp_compatible(filename):
+	my_config = config.configuration()
 	ffprobe_file = FFProbe(filename)
-	condition1 = (os.path.getsize(ffprobe_file.path_to_video) < 64000000) 
+	max_size = int(my_config.max_filesize)
+	condition1 = (os.path.getsize(ffprobe_file.path_to_video) < max_size) 
 	condition2 = (ffprobe_file.metadata['major_brand'].lower() == 'isom')
 	return condition1 and condition2
 
@@ -94,9 +104,7 @@ def get_default_color():
 
 #TODO user defined max size
 #TODO non verbose while resizing
-def get_max_filesize():
-	#return 63000000
-	return 15000000
+
 
 def get_filesize(filename):
 	return os.path.getsize(filename)
@@ -108,7 +116,10 @@ def show_warning(filename):
 		return get_red_color() + '   ** Not Whatsapp compatible ** ' + get_default_color()
 
 def get_number_of_chunks(filename):
-	return  (os.path.getsize(filename) // get_max_filesize() + 1)
+	my_config = config.configuration()
+	max_size = int(my_config.max_filesize)
+
+	return  (os.path.getsize(filename) // max_size + 1)
 
 def get_split_name(input, i=0):
 	return	input[:-4] + f'_{str(i)}' + '_output' + input[-4:]
@@ -147,11 +158,12 @@ def resize_if_needed(filename):
 	return filename
 
 def resize_in_half(input_filename, output_filename):
-	arq_ffmpeg = 'C:/Program Files/ffmpeg/bin/ffmpeg.exe'
-	bitrate = get_new_bitrate(input_filename)
+	my_config = config.configuration()
+	arq_ffmpeg = my_config.arq_ffmpeg #'C:/Program Files/ffmpeg/bin/ffmpeg.exe'
+	new_bitrate = get_new_bitrate(input_filename)
 	ff = ffmpy.FFmpeg(executable = arq_ffmpeg,
 		inputs={input_filename: None},
-		outputs={output_filename: ['-y', '-vf', 'scale=iw/2:ih/2', '-c:v', 'libx264', '-b:v', str(bitrate), '-c:a', 'aac']} )
+		outputs={output_filename: ['-y', '-vf', 'scale=iw/2:ih/2', '-c:v', 'libx264', '-b:v', str(new_bitrate), '-c:a', 'aac']} )
 	
 	print(ff.cmd)
 	ff.run()
@@ -161,15 +173,19 @@ def ask_and_convert(filename):
 		answer = (input("Do you wish converting to whatsapp compatible (Y/N) ? ")).lower()
 		if (answer == 's' or answer == 'y'):
 			print("Initiating conversion...")
-			split_into_n_files(filename, get_number_of_chunks(filename)	)	
+			split_into_n_files(filename, get_number_of_chunks(filename))	
 
 
-def get_new_bitrate(filename):
+def get_new_bitrate(filename, verbose = False):
 	new_bitrate = 0
 	ffprobe_file = FFProbe(filename)
 	for stream in ffprobe_file.streams:
 		if stream.is_video():
-			new_bitrate = int(int(stream.bit_rate) / 2)
+			if verbose:
+				print('old bit rate: ', stream.bit_rate)
+			new_bitrate = int(int(stream.bit_rate) / 3)
+			if verbose:
+				print('new bit rate: ', str(new_bitrate))
 	return new_bitrate
 
 
@@ -201,16 +217,18 @@ def print_info(filename):
 	print(f'Para Whatsapp, teremos que dividir este arquivo em {get_number_of_chunks(filename)} parte(s).')
 
 def split_into_n_files(filename, n_parts):
+	my_config = config.configuration()
 	print("Starting splitting file : " + filename + " into "+ str(n_parts) + " parts.")
 	time_stack = 0;
 	for i in range(1, n_parts+1):
 		new_filename = get_split_name(filename, i)
 		print(i, new_filename, time_stack)
-		time_stack = time_stack + create_split_file(filename, new_filename, get_max_filesize(), time_stack )
+		time_stack = time_stack + create_split_file(filename, new_filename, my_config.max_filesize, time_stack)
 
 
 def create_split_file(input_name, output_name, max_size, time_stack):
-	arq_ffmpeg = 'C:/Program Files/ffmpeg/bin/ffmpeg.exe'
+	my_config = config.configuration()
+	arq_ffmpeg = my_config.arq_ffmpeg# 'C:/Program Files/ffmpeg/bin/ffmpeg.exe'
 	max_size = str(max_size) 
 	time_stack = str(time_stack)
 	print(f'input: {input_name}, output: {output_name}')
@@ -224,23 +242,32 @@ def create_split_file(input_name, output_name, max_size, time_stack):
 	return get_time_in_secs(ffprobe_file)
 
 
+
 def main():
 	#TODO:
 	#verificar qual é o lado maior e se for maior q 720, fazer scale p 720, antes de dividir
 	#https://ottverse.com/change-resolution-resize-scale-video-using-ffmpeg/
 	#de repente é melhor dividir por 2 e mandar bala
+	#https://stackoverflow.com/questions/26630821/static-variable-in-python
+	#tenho que criar uma classe de configuracao para utilizar as configuracoes por todas as funcoes
 	arguments = get_arguments()
 	input_file = arguments[0]
-	output_dir = './output/'
-	arq_ffmpeg = 'C:/Program Files/ffmpeg/bin/ffmpeg.exe'
-	arq_ffprobe = 'C:/Program Files/ffmpeg/bin/ffprobe.exe'
+	#
+	my_config = config.configuration()
+	
+	print(my_config.output_dir)
+	print(my_config.arq_ffmpeg)
+	print(my_config.arq_ffprobe)
+	
 	sucess_message = "Execução encerrada  com sucesso"
-
+	#exit(0)
 	print("...Iniciando...")
 	print_info(input_file)
 	new_input_file = resize_if_needed(input_file)
 	ask_and_convert(new_input_file)
 	print(sucess_message)
+
+
 
 def get_arguments():
 	return sys.argv[1:]
