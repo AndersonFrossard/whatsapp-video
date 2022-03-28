@@ -78,16 +78,18 @@ You can obtain FFMPEG here:<br>
 
 ### Configuration
 
-First time you run, the program will create a configuration file and save it with the name:
+First time you run the program, a configuration file will be created and saved  with the name:
 
 	.env
 
-Open this file using notepad (or any other text editor) and manually set the path for two programs:
+You MUST HAVE FFMPEG installed in your system. Open the configuration file using notepad (or any other text editor) and manually set the path for two programs:
 >FFMPEG.EXE
 >
 >FFPROBE.EXE
 
-There two files are vital to our program run properly. Within the configuration file you can also set the output directory and max filesize (in bytes)
+These  two files are vital to allow our program running properly.  Within the configuration file you can also set:
+* The output directory 
+* Max individual filesize (in bytes)
 
 ## CLI - Command Line Interface
 ---
