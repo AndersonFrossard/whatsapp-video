@@ -17,6 +17,8 @@ Table of contents
 - [Instalation and how to use](#instalation-and-how-to-use)
 	- [Requirements](#requirements)
 	
+	- [Configuration](#configuration)	
+	
 	- [Command-line interface](#cli)
 	
 	- [Windows Standalone](#standalone)
@@ -49,7 +51,7 @@ My software is straight to the point:</p>
 - [x] Split into n files if filesize is too big
 
 ## Instalation-and-how-to-use
-
+---
 
 ### Requirements
 
@@ -73,7 +75,22 @@ You can install it by running this command:
 You can obtain FFMPEG here:<br>
 <a href="https://ffmpeg.org">https://ffmpeg.org</a>
 
+
+### Configuration
+
+First time you run, the program will create a configuration file and save it with the name:
+
+	.env
+
+Open this file using notepad (or any other text editor) and manually set the path for two programs:
+>FFMPEG.EXE
+>
+>FFPROBE.EXE
+
+There two files are vital to our program run properly. Within the configuration file you can also set the output directory and max filesize (in bytes)
+
 ## CLI - Command Line Interface
+---
 
 <h2>Running with CLI :</h2>
 
@@ -82,6 +99,7 @@ You can obtain FFMPEG here:<br>
 ![CLI interface](./img/image01.jpg)
 
 ## Standalone
+---
 ## Standalone executable for Windows:
 
 Perhaps you just want a fast way to get things running. The standalone executable will suit you well.
@@ -153,7 +171,7 @@ You can learn basic comands on my github page here:
 Enjoy!
 
 ## Tecnologies
-
+---
 Solely written in Python 3.8.7.<br />
 Libraries imported:
 <ul>
