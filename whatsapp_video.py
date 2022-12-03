@@ -69,9 +69,10 @@ Sugestoes para o arquivo de configuracao:
 * olhar a lib cnofig parser (yaml)
 * https://towardsdatascience.com/from-novice-to-expert-how-to-write-a-configuration-file-in-python-273e171a8eb3
 """
-
+#pip install ffprobe-python
 import ffmpy
 from ffprobe import FFProbe
+#import ffprobe
 import sys
 from colorama import init
 from colorama import Fore, Back, Style
@@ -79,7 +80,7 @@ import os
 import re
 
 import config
-
+import pdb
 init()
 
 def is_whatsapp_compatible(filename):
@@ -152,6 +153,7 @@ def resize_if_needed(filename):
 		if not (ask_to_continue('File is too big. I will resize it first. (Y)es or (N)o ? ')):
 			print("Program terminated by user.")
 			exit(0)
+
 		new_filename = get_name_with_suffix(filename, 'resized')
 		resize_in_half(filename, new_filename)
 		filename = new_filename
@@ -161,18 +163,27 @@ def resize_in_half(input_filename, output_filename):
 	my_config = config.configuration()
 	arq_ffmpeg = my_config.arq_ffmpeg #'C:/Program Files/ffmpeg/bin/ffmpeg.exe'
 	new_bitrate = get_new_bitrate(input_filename)
+	pdb.set_trace()
+	"""
 	ff = ffmpy.FFmpeg(executable = arq_ffmpeg,
 		inputs={input_filename: None},
 		outputs={output_filename: ['-y', '-vf', 'scale=iw/2:ih/2', '-c:v', 'libx264', '-b:v', str(new_bitrate), '-c:a', 'aac']} )
-	
+	"""		
+	ff = ffmpy.FFmpeg(executable = arq_ffmpeg,
+		inputs={input_filename: None},
+		outputs={output_filename: ['-y', '-vf', 'pad=width=ceil(iw/2)*2:height=ceil(ih/2)*2', '-c:v', 'libx264', '-b:v', str(new_bitrate), '-c:a', 'aac']} )
+
+	#-vf pad="width=ceil(iw/2)*2:height=ceil(ih/2)*2"
 	print(ff.cmd)
 	ff.run()
 
 def ask_and_convert(filename):
 	if (not is_whatsapp_compatible(filename)):
 		answer = (input("Do you wish converting to whatsapp compatible (Y/N) ? ")).lower()
+		pdb.set_trace()
 		if (answer == 's' or answer == 'y'):
 			print("Initiating conversion...")
+
 			split_into_n_files(filename, get_number_of_chunks(filename))	
 
 
@@ -218,6 +229,7 @@ def print_info(filename):
 
 def split_into_n_files(filename, n_parts):
 	my_config = config.configuration()
+	pdb.set_trace()
 	print("Starting splitting file : " + filename + " into "+ str(n_parts) + " parts.")
 	time_stack = 0;
 	for i in range(1, n_parts+1):
@@ -233,6 +245,8 @@ def create_split_file(input_name, output_name, max_size, time_stack):
 	time_stack = str(time_stack)
 	print(f'input: {input_name}, output: {output_name}')
 	print(f'max_size: {max_size}, time_stack: {time_stack}')
+
+	pdb.set_trace()
 
 	ff = ffmpy.FFmpeg(executable = arq_ffmpeg, inputs={input_name: None}, outputs={output_name: f'-y -fs {max_size} -ss {time_stack} -c:v copy -c:a copy'})
 	print()
@@ -251,6 +265,10 @@ def main():
 	#https://stackoverflow.com/questions/26630821/static-variable-in-python
 	#tenho que criar uma classe de configuracao para utilizar as configuracoes por todas as funcoes
 	arguments = get_arguments()
+	if not arguments:
+		print('Please inform filename to be converted.')
+		print('E.g.: python myscript.py movieFile.avi')
+		sys.exit(0)
 	input_file = arguments[0]
 	#
 	my_config = config.configuration()
