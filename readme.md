@@ -152,13 +152,13 @@ The hashes must be exactly the same.
 
 ## Public-key
 
-My PGP public key is avaiable at:
+My PGP public key is available at:
 
 [Public Key at Github](https://github.com/AndersonFrossard/karoua_youtube_download_gui/tree/main/standalone/frossard_public_key.asc)
 
 [PGP Global Directory](https://keyserver2.pgp.com/vkd/DownloadKey.event?keyid=0xB79AAE8846C18DF7)
 
-[![PGP 0x46C18DF7](https://peegeepee.com/badge/orange/46C18DF7.svg)](https://d.peegeepee.com/921D2E998D1E3213DFCF74F7B79AAE8846C18DF7.asc)
+
 
 ### GPG and Encryption
 
